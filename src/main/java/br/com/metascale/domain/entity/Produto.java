@@ -5,6 +5,8 @@ import java.util.Date;
 import br.com.metascale.constants.Status;
 import br.com.metascale.domain.ProdutoDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +22,7 @@ public class Produto {
 	private String nome_produto;
 	private String descricao;
 	private Date data_lancamento = new Date();
+	@Enumerated(EnumType.STRING)
 	private Status status;
 	
 	public Produto() {}
@@ -29,7 +32,7 @@ public class Produto {
 		this.nome_produto = produto.nome_produto();
 		this.descricao = produto.descricao();
 		this.data_lancamento = produto.data_lancamento();
-		this.status = produto.status();
+		this.status = Status.of(produto.status());
 	}
 	
 	public void updateProduto(ProdutoDTO produto) {
@@ -42,7 +45,7 @@ public class Produto {
 		}
 		
 		if (produto.status() != null) {
-			this.status = produto.status();			
+			this.status = Status.of(produto.status());			
 		}
 
 	}

@@ -1,8 +1,12 @@
 package br.com.metascale.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.metascale.domain.ClienteProdutoDTO;
 import br.com.metascale.domain.ClientesDTO;
 import br.com.metascale.domain.entity.Clientes;
 import br.com.metascale.repository.ClientesRepository;
@@ -12,6 +16,13 @@ public class ClientesService {
 
 	@Autowired
 	private ClientesRepository clientesRepository;
+
+	public List<ClientesDTO> getAll() {
+		return clientesRepository.findAll()
+				.stream()
+				.map(ClientesDTO::new)
+				.collect(Collectors.toList());
+	}
 	
 	public ClientesDTO getBydId(Integer cliente_id) {
 		var clientes = clientesRepository.findById(cliente_id);
