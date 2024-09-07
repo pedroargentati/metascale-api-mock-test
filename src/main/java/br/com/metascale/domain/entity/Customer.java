@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Table(name = "client")
+@Table(name = "customer")
 @Entity(name = "Client")
 public class Customer {
 

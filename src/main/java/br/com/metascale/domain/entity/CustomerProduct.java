@@ -1,5 +1,6 @@
 package br.com.metascale.domain.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.metascale.constants.Status;
@@ -23,6 +24,7 @@ public class CustomerProduct {
 	private Integer product_id;
 	private Date association_date;
 	private String feedback;
+	private BigDecimal price;
 	
 	@Enumerated(EnumType.STRING)
 	private Status status;
@@ -41,6 +43,10 @@ public class CustomerProduct {
 	public void updateCustomerProduct(CustomerProductDTO customerProduct) {
 	    if (customerProduct.feedback() != null) {
 	        this.feedback = customerProduct.feedback();
+	    }
+	    
+	    if (customerProduct.price() != null) {
+	    	this.price = customerProduct.price();
 	    }
 	}
 
@@ -92,4 +98,12 @@ public class CustomerProduct {
 		this.status = status;
 	}
 
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+	
 }
