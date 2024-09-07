@@ -14,45 +14,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.metascale.domain.ClientesDTO;
-import br.com.metascale.service.ClientesService;
+import br.com.metascale.domain.CustomerDTO;
+import br.com.metascale.service.CustomerService;
 
 @RestController
-@RequestMapping("/api/metascale/clientes")
-public class ClientesRest {
+@RequestMapping("/api/metascale/customer")
+public class CustomerRest {
 
 	@Autowired
-	private ClientesService clientesService;
+	private CustomerService customerService;
 
 	@GetMapping("/")
-	public ResponseEntity<List<ClientesDTO>> get() {
-		var clientes = clientesService.getAll();
+	public ResponseEntity<List<CustomerDTO>> get() {
+		var clientes = customerService.getAll();
 		return (clientes == null || !clientes.isEmpty())
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/{clientes_id}")
-	public ResponseEntity<ClientesDTO> get(@PathVariable Integer clientes_id) {
-		var clientes = clientesService.getBydId(clientes_id);
+	@GetMapping("/{customer_id}")
+	public ResponseEntity<CustomerDTO> get(@PathVariable Integer customer_id) {
+		var clientes = customerService.getBydId(customer_id);
 		return clientes != null
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.notFound().build();
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<ClientesDTO> createCliente(@RequestBody ClientesDTO clienteDTO) {
-		ClientesDTO savedCliente = clientesService.create(clienteDTO);
+	public ResponseEntity<CustomerDTO> createCliente(@RequestBody CustomerDTO clienteDTO) {
+		CustomerDTO savedCliente = customerService.create(clienteDTO);
 
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/api/metascale/clientes/{clientes_id}")
-				.buildAndExpand(savedCliente.cliente_id()).toUri();
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/api/metascale/customer/{customer_id}")
+				.buildAndExpand(savedCliente.customer_id()).toUri();
 
 		return ResponseEntity.created(location).body(savedCliente);
 	}
 
-	@PutMapping("/{clientes_id}")
-	public ResponseEntity<ClientesDTO> change(@PathVariable Integer clientes_id, @RequestBody ClientesDTO clientes) {
-		var clientesUpdated = clientesService.update(clientes, clientes_id);
+	@PutMapping("/{customer_id}")
+	public ResponseEntity<CustomerDTO> change(@PathVariable Integer customer_id, @RequestBody CustomerDTO clientes) {
+		var clientesUpdated = customerService.update(clientes, customer_id);
 		return ResponseEntity.ok(clientesUpdated);
 	}
 }

@@ -14,50 +14,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.metascale.domain.ClienteProdutoDTO;
-import br.com.metascale.service.ClienteProdutoService;
+import br.com.metascale.domain.CustomerProductDTO;
+import br.com.metascale.service.CustomerProductService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/metascale/clienteproduto")
-public class ClienteProdutoRest {
+@RequestMapping("/api/metascale/customerproduct")
+public class CustomerProductRest {
 
 	@Autowired
-	private ClienteProdutoService clienteProdutoService;
+	private CustomerProductService customerProductService;
 
 	@GetMapping("/")
-	public ResponseEntity<List<ClienteProdutoDTO>> get() {
-		var clientes = clienteProdutoService.getAll();
+	public ResponseEntity<List<CustomerProductDTO>> get() {
+		var clientes = customerProductService.getAll();
 		return (clientes == null || !clientes.isEmpty())
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/{cliente_produto_id}")
-	public ResponseEntity<ClienteProdutoDTO> get(@PathVariable Integer cliente_produto_id) {
-		var clientes = clienteProdutoService.getBydId(cliente_produto_id);
+	@GetMapping("/{customer_product_id}")
+	public ResponseEntity<CustomerProductDTO> get(@PathVariable Integer customer_product_id) {
+		var clientes = customerProductService.getBydId(customer_product_id);
 		return clientes != null
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.notFound().build();
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<ClienteProdutoDTO> create(@Valid @RequestBody ClienteProdutoDTO clientes) {
-		ClienteProdutoDTO clienteProdutoSaved = clienteProdutoService.create(clientes);
+	public ResponseEntity<CustomerProductDTO> create(@Valid @RequestBody CustomerProductDTO clientes) {
+		CustomerProductDTO clienteProdutoSaved = customerProductService.create(clientes);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/api/metascale/clienteproduto/{cliente_produto_id}")
-				.buildAndExpand(clienteProdutoSaved.cliente_produto_id())
+				.path("/api/metascale/customerproduct/{customer_product_id}")
+				.buildAndExpand(clienteProdutoSaved.customer_id())
 				.toUri();
 
 		return ResponseEntity.created(location).body(clienteProdutoSaved);
 	}
 
-	@PutMapping("/{cliente_produto_id}")
-	public ResponseEntity<ClienteProdutoDTO> change(@PathVariable Integer cliente_produto_id,
-			@RequestBody ClienteProdutoDTO clientes) {
-		var clientesUpdated = clienteProdutoService.update(clientes, cliente_produto_id);
-		return ResponseEntity.ok(clientesUpdated);
+	@PutMapping("/{customer_product_id}")
+	public ResponseEntity<CustomerProductDTO> change(@PathVariable Integer customer_product_id,
+			@RequestBody CustomerProductDTO clientes) {
+		var customerUpdated = customerProductService.update(clientes, customer_product_id);
+		return ResponseEntity.ok(customerUpdated);
 	}
 
 }

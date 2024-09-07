@@ -14,48 +14,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.metascale.domain.ProdutoDTO;
-import br.com.metascale.service.ProdutoService;
+import br.com.metascale.domain.ProductDTO;
+import br.com.metascale.service.ProductService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/metascale/produto")
-public class ProdutoRest {
+@RequestMapping("/api/metascale/product")
+public class ProductRest {
 
 	@Autowired
-	private ProdutoService produtoService;
+	private ProductService productService;
 
 	@GetMapping("/")
-	public ResponseEntity<List<ProdutoDTO>> get() {
-		var clientes = produtoService.getAll();
+	public ResponseEntity<List<ProductDTO>> get() {
+		var clientes = productService.getAll();
 		return (clientes == null || !clientes.isEmpty())
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/{produto_id}")
-	public ResponseEntity<ProdutoDTO> get(@PathVariable Integer produto_id) {
-		var produto = produtoService.getBydId(produto_id);
+	@GetMapping("/{product_id}")
+	public ResponseEntity<ProductDTO> get(@PathVariable Integer product_id) {
+		var produto = productService.getBydId(product_id);
 		return produto != null
 				? ResponseEntity.ok(produto)
 				: ResponseEntity.notFound().build();
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<ProdutoDTO> create(@Valid @RequestBody ProdutoDTO produto) {
-		var produtoSaved = produtoService.create(produto);
+	public ResponseEntity<ProductDTO> create(@Valid @RequestBody ProductDTO produto) {
+		var produtoSaved = productService.create(produto);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/api/metascale/produto/{produto_id}")
-				.buildAndExpand(produtoSaved.produto_id())
+				.path("/api/metascale/product/{product_id}")
+				.buildAndExpand(produtoSaved.product_id())
 				.toUri();
 
 		return ResponseEntity.created(location).body(produtoSaved);
 	}
 
 	@PutMapping("/{produto_id}")
-	public ResponseEntity<ProdutoDTO> change(@PathVariable Integer produto_id, @RequestBody ProdutoDTO produto) {
-		var produtoUpdated = produtoService.update(produto, produto_id);
+	public ResponseEntity<ProductDTO> change(@PathVariable Integer product_id, @RequestBody ProductDTO produto) {
+		var produtoUpdated = productService.update(produto, product_id);
 
 		return ResponseEntity.ok(produtoUpdated);
 

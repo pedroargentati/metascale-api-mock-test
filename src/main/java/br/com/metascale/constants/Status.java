@@ -2,7 +2,10 @@ package br.com.metascale.constants;
 
 public enum Status {
 	
-	EM_ANDAMENTO("EM_ANDAMENTO");
+	ACTIVE("active"),
+	ACTIVATING("activating"),
+	SUSPENDED("suspended"),
+	CANCELLED("cancelled");
 	
 	private String status;
 	
@@ -18,7 +21,7 @@ public enum Status {
 		for( Status type : Status.values() ) {
 			if( type.getStatus().equalsIgnoreCase( tipo ) ) return type;
 		}
-		return Status.EM_ANDAMENTO;
+		return Status.ACTIVE;
 	}
 
 }
