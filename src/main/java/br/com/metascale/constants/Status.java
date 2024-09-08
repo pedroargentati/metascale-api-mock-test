@@ -3,6 +3,7 @@ package br.com.metascale.constants;
 public enum Status {
 	
 	ACTIVE("active"),
+	INACTIVE("inactive"),
 	ACTIVATING("activating"),
 	SUSPENDED("suspended"),
 	CANCELLED("cancelled");
