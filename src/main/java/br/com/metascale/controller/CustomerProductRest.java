@@ -25,10 +25,10 @@ public class CustomerProductRest {
 	@Autowired
 	private CustomerProductService customerProductService;
 
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<List<CustomerProductDTO>> get() {
 		var clientes = customerProductService.getAll();
-		return (clientes == null || !clientes.isEmpty())
+		return (clientes != null && !clientes.isEmpty())
 				? ResponseEntity.ok(clientes)
 				: ResponseEntity.noContent().build();
 	}

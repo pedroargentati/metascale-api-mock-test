@@ -25,7 +25,7 @@ public class ProductRest {
 	@Autowired
 	private ProductService productService;
 
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<List<ProductDTO>> get() {
 		var clientes = productService.getAll();
 		return (clientes == null || !clientes.isEmpty())

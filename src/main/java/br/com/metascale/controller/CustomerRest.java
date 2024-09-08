@@ -24,7 +24,7 @@ public class CustomerRest {
 	@Autowired
 	private CustomerService customerService;
 
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<List<CustomerDTO>> get() {
 		var clientes = customerService.getAll();
 		return (clientes == null || !clientes.isEmpty())
