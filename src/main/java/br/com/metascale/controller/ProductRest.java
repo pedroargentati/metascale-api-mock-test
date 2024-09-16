@@ -53,7 +53,7 @@ public class ProductRest {
 		return ResponseEntity.created(location).body(produtoSaved);
 	}
 
-	@PutMapping("/{produto_id}")
+	@PutMapping("/{product_id}")
 	public ResponseEntity<ProductDTO> change(@PathVariable Integer product_id, @RequestBody ProductDTO produto) {
 		var produtoUpdated = productService.update(produto, product_id);
 
