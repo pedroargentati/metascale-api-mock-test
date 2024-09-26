@@ -91,7 +91,7 @@ public class UsersProductsService {
 		List<String> identifiers = List.of("+51939791073");
 
 		// Obter as descrições do produto principal
-		List<DescriptionDTO> descriptions = getProductDescriptions(userProduct.getProduct_id());
+		List<DescriptionDTO> descriptions = this.getProductDescriptions(userProduct.getProduct_id());
 
 		// Buscar produto principal
 		Product product = productRepository
@@ -102,7 +102,7 @@ public class UsersProductsService {
 		List<ProductDTO> subProducts = productRepository.findByParentId(userProduct.getProduct_id())
 				.stream()
 				.map(subProduct -> {
-					List<DescriptionDTO> subProductDescriptions = getProductDescriptions(subProduct.getId());
+					List<DescriptionDTO> subProductDescriptions = this.getProductDescriptions(subProduct.getId());
 					return new ProductDTO(subProduct, subProductDescriptions);
 				}).collect(Collectors.toList());
 
