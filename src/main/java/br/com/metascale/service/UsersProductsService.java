@@ -10,6 +10,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.metascale.domain.DescriptionDTO;
+import br.com.metascale.domain.PriceDTO;
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.Product;
 import br.com.metascale.domain.entity.ProductDescription;
@@ -104,7 +105,7 @@ public class UsersProductsService {
                 identifiers,
                 descriptions, 
                 null,
-                null 
+                new PriceDTO(userProduct) 
         );
     }
 
