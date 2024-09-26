@@ -51,7 +51,7 @@ public class UsersProductsService {
 			throw new EntityNotFoundException("Usuário não encontrado.");
 		}
 		
-        List<UserProduct> userProducts = userProductsRepository.findByuser_id(user_id);
+        List<UserProduct> userProducts = userProductsRepository.findByUserId(user_id);
         if (userProducts == null || userProducts.isEmpty()) {
 			throw new NotFoundException();
         }
@@ -88,18 +88,20 @@ public class UsersProductsService {
 	}
 	
 	private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
-		List<String> identifiers = List.of("+51939791073");
+		String product_id = userProduct.getProduct_id();
+
+		List<String> identifiers = this.getIdentifiersByProductId(product_id);
 
 		// Obter as descrições do produto principal
-		List<DescriptionDTO> descriptions = this.getProductDescriptions(userProduct.getProduct_id());
+		List<DescriptionDTO> descriptions = this.getProductDescriptions(product_id);
 
 		// Buscar produto principal
 		Product product = productRepository
-				.findById(userProduct.getProduct_id())
-				.orElseThrow(() -> new IllegalArgumentException("Produto com ID " + userProduct.getProduct_id() + " não encontrado"));
+				.findById(product_id)
+				.orElseThrow(() -> new IllegalArgumentException("Produto com ID " + product_id + " não encontrado"));
 
 		// Buscar subprodutos e suas descrições
-		List<ProductDTO> subProducts = productRepository.findByParentId(userProduct.getProduct_id())
+		List<ProductDTO> subProducts = productRepository.findByParentId(product_id)
 				.stream()
 				.map(subProduct -> {
 					List<DescriptionDTO> subProductDescriptions = this.getProductDescriptions(subProduct.getId());
@@ -107,7 +109,7 @@ public class UsersProductsService {
 				}).collect(Collectors.toList());
 
 		return new UserProductsDTO(
-				userProduct.getProduct_id(),
+				product_id,
 				product.getProduct_name(),
 				product.getProduct_type().getType(),
 				userProduct.getStatus().getStatus(),
@@ -126,4 +128,16 @@ public class UsersProductsService {
 				.collect(Collectors.toList());
 	}
 
+	// Método para retornar os números de telefone dos usuários que possuem determinado produto
+	public List<String> getIdentifiersByProductId(String productId) {
+		// Buscar os user_id dos usuários que possuem o produto
+		List<String> userIds = userProductsRepository.findUserIdsByProductId(productId);
+
+		// Buscar os telefones dos usuários e retornar como lista de Strings
+		return userIds.stream()
+				.map(userId -> userRepository.findById(userId))
+				.filter(Optional::isPresent)
+				.map(user -> user.get().getPhone())
+				.collect(Collectors.toList());
+	}
 }
