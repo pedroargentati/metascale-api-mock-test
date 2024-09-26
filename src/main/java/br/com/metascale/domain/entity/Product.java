@@ -1,95 +1,97 @@
 package br.com.metascale.domain.entity;
 
-import java.util.Date;
+import java.util.Set;
 
 import br.com.metascale.constants.ProductType;
 import br.com.metascale.domain.ProductDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Table(name = "product")
 @Entity(name = "Product")
 public class Product {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private String product_name;
-	private String description;
-	private Date release_date;
-	
-	@Enumerated(EnumType.STRING)
-	private ProductType product_type;
-	
-	public Product() {}
-	
-	public Product(ProductDTO produto) {
-		this.id = produto.product_id();
-		this.product_name = produto.product_name();
-		this.description = produto.description();
-		this.release_date = produto.release_date();
-		this.product_type = ProductType.of(produto.product_type());
-	}
-	
-	public Integer getId() {
-		return id;
+    @Id
+    private String id;
+    
+    private String product_name;
+    
+    @Enumerated(EnumType.STRING)
+    private ProductType product_type;
+    
+    private String parent_id;
+    
+    // Relacionamento com sub-produtos
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private Set<Product> subProducts;
+    
+    public Product() {}
+
+    public Product(ProductDTO produto) {
+        this.id = produto.id();
+        this.product_name = produto.product_name();
+        this.product_type = ProductType.of(produto.product_type());
+    }
+
+    // Getters e Setters
+    
+    public void updateProduto(ProductDTO produto) {
+        if (produto.product_name() != null) {
+            this.product_name = produto.product_name();
+        }
+
+        if (produto.product_type() != null) {
+            this.product_type = ProductType.of(produto.product_type());
+        }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getParent_id() {
+		return parent_id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setParent_id(String parent_id) {
+		this.parent_id = parent_id;
 	}
 
 	public String getProduct_name() {
-		return product_name;
-	}
+        return product_name;
+    }
 
-	public void setProduct_name(String product_name) {
-		this.product_name = product_name;
-	}
+    public void setProduct_name(String product_name) {
+        this.product_name = product_name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public ProductType getProduct_type() {
+        return product_type;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setProduct_type(ProductType product_type) {
+        this.product_type = product_type;
+    }
 
-	public Date getRelease_date() {
-		return release_date;
-	}
+    public Set<Product> getSubProducts() {
+        return subProducts;
+    }
 
-	public void setRelease_date(Date release_date) {
-		this.release_date = release_date;
-	}
-
-	public ProductType getProduct_type() {
-		return product_type;
-	}
-
-	public void setProduct_type(ProductType product_type) {
-		this.product_type = product_type;
-	}
-	
-	public void updateProduto(ProductDTO produto) {
-		if (produto.product_name() != null) {
-			this.product_name = produto.product_name();			
-		}
-
-		if (produto.description() != null) {
-			this.description = produto.description();			
-		}
-		
-		if (produto.product_type() != null) {
-			this.product_type = ProductType.of(produto.product_type());			
-		}
-
-	}
-
-	
+    public void setSubProducts(Set<Product> subProducts) {
+        this.subProducts = subProducts;
+    }
 }

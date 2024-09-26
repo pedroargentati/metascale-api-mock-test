@@ -1,5 +1,6 @@
 package br.com.metascale.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.metascale.domain.ProductDTO;
+import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.Product;
 import br.com.metascale.repository.ProdutoRepository;
 
@@ -21,6 +23,10 @@ public class ProductService {
 				.stream()
 				.map(ProductDTO::new)
 				.collect(Collectors.toList());
+	}
+	
+	public List<UserProductsDTO> getAllUserProducts(String user_id) {
+		return new ArrayList<>();
 	}
 	
 	public ProductDTO getBydId(Integer produto_id) {

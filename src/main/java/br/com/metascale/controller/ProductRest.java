@@ -47,7 +47,7 @@ public class ProductRest {
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/api/metascale/product/{product_id}")
-				.buildAndExpand(produtoSaved.product_id())
+				.buildAndExpand(produtoSaved.id())
 				.toUri();
 
 		return ResponseEntity.created(location).body(produtoSaved);

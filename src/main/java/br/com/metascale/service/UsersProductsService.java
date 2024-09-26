@@ -6,36 +6,36 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.metascale.domain.CustomerProductDTO;
-import br.com.metascale.domain.entity.CustomerProduct;
+import br.com.metascale.domain.UserProductsDTO;
+import br.com.metascale.domain.entity.UserProduct;
 import br.com.metascale.repository.CustomerProductRepository;
 
 @Service
-public class CustomerProductService {
+public class UsersProductsService {
 
 	@Autowired
 	private CustomerProductRepository clienteProdutoRepository;
 
-	public List<CustomerProductDTO> getAll() {
+	public List<UserProductsDTO> getAll() {
 		return clienteProdutoRepository.findAll()
 				.stream()
-				.map(CustomerProductDTO::new)
+				.map(UserProductsDTO::new)
 				.collect(Collectors.toList());
 	}
-
-	public CustomerProductDTO getBydId(Integer cliente_id) {
+	
+	public UserProductsDTO getBydId(Integer cliente_id) {
 		var clienteProduto = clienteProdutoRepository.findById(cliente_id);
 
-		return clienteProduto.isPresent() ? new CustomerProductDTO(clienteProduto.get()) : null;
+		return clienteProduto.isPresent() ? new UserProductsDTO(clienteProduto.get()) : null;
 	}
 
-	public CustomerProductDTO create(CustomerProductDTO cliente) {
-		var clienteSaved = clienteProdutoRepository.save(new CustomerProduct(cliente));
+	public UserProductsDTO create(UserProductsDTO cliente) {
+		var clienteSaved = clienteProdutoRepository.save(new UserProduct(cliente));
 
-		return new CustomerProductDTO(clienteSaved);
+		return new UserProductsDTO(clienteSaved);
 	}
 
-	public CustomerProductDTO update(CustomerProductDTO cliente, Integer cliente_id) {
+	public UserProductsDTO update(UserProductsDTO cliente, Integer cliente_id) {
 		var optionalCliente = clienteProdutoRepository.findById(cliente_id);
 		if (!optionalCliente.isPresent()) {
 			return null;
@@ -46,7 +46,7 @@ public class CustomerProductService {
 		clienteExistente.updateCustomerProduct(cliente);
 		clienteProdutoRepository.save(clienteExistente);
 
-		return new CustomerProductDTO(clienteExistente);
+		return new UserProductsDTO(clienteExistente);
 	}
 
 }
