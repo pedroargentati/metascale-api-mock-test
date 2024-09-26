@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.PriceDTO;
+import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.Product;
 import br.com.metascale.domain.entity.ProductDescription;
@@ -87,14 +88,26 @@ public class UsersProductsService {
 	}
 	
     private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
-        List<String> identifiers = List.of("+51939791073");
-        List<ProductDescription> listProductDescription = Optional.ofNullable(this.productDescriptionRepository.findByProductId(userProduct.getProduct_id())).orElse(Collections.emptyList());
+		List<String> identifiers = List.of("+51939791073");
+		List<ProductDescription> listProductDescription = Optional
+				.ofNullable(this.productDescriptionRepository.findByProductId(userProduct.getProduct_id()))
+				.orElse(Collections.emptyList());
 
-        List<DescriptionDTO> descriptions = listProductDescription.stream()
-        		.map(DescriptionDTO::new)
-        		.collect(Collectors.toList());
-        
-        Optional<Product> product = this.productRepository.findById(userProduct.getProduct_id());
+		List<DescriptionDTO> descriptions = listProductDescription.stream()
+				.map(DescriptionDTO::new)
+				.collect(Collectors.toList());
+
+		Optional<Product> product = this.productRepository.findById(userProduct.getProduct_id());
+
+		Optional<List<Product>> subProducts = Optional
+				.ofNullable(this.productRepository.findByParentId(userProduct.getProduct_id()));
+
+		List<ProductDTO> sub_products = Collections.emptyList();
+		if (!subProducts.isEmpty()) {
+			sub_products = subProducts.get().stream()
+					.map(ProductDTO::new)
+					.collect(Collectors.toList());
+		}
         
         return new UserProductsDTO(
                 userProduct.getProduct_id(),
@@ -104,7 +117,7 @@ public class UsersProductsService {
                 userProduct.getStart_date().toString(),
                 identifiers,
                 descriptions, 
-                null,
+                sub_products,
                 new PriceDTO(userProduct) 
         );
     }
