@@ -87,39 +87,43 @@ public class UsersProductsService {
 		return new UserProductsDTO(clienteExistente);
 	}
 	
-    private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
+	private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
 		List<String> identifiers = List.of("+51939791073");
-		List<ProductDescription> listProductDescription = Optional
-				.ofNullable(this.productDescriptionRepository.findByProductId(userProduct.getProduct_id()))
-				.orElse(Collections.emptyList());
 
-		List<DescriptionDTO> descriptions = listProductDescription.stream()
+		// Obter as descrições do produto principal
+		List<DescriptionDTO> descriptions = getProductDescriptions(userProduct.getProduct_id());
+
+		// Buscar produto principal
+		Product product = productRepository
+				.findById(userProduct.getProduct_id())
+				.orElseThrow(() -> new IllegalArgumentException("Produto com ID " + userProduct.getProduct_id() + " não encontrado"));
+
+		// Buscar subprodutos e suas descrições
+		List<ProductDTO> subProducts = productRepository.findByParentId(userProduct.getProduct_id())
+				.stream()
+				.map(subProduct -> {
+					List<DescriptionDTO> subProductDescriptions = getProductDescriptions(subProduct.getId());
+					return new ProductDTO(subProduct, subProductDescriptions);
+				}).collect(Collectors.toList());
+
+		return new UserProductsDTO(
+				userProduct.getProduct_id(),
+				product.getProduct_name(),
+				product.getProduct_type().getType(),
+				userProduct.getStatus().getStatus(),
+				userProduct.getStart_date().toString(),
+				identifiers,
+				descriptions,
+				subProducts,
+				new PriceDTO(userProduct)
+		);
+	}
+
+	private List<DescriptionDTO> getProductDescriptions(String productId) {
+		return productDescriptionRepository.findByProductId(productId)
+				.stream()
 				.map(DescriptionDTO::new)
 				.collect(Collectors.toList());
-
-		Optional<Product> product = this.productRepository.findById(userProduct.getProduct_id());
-
-		Optional<List<Product>> subProducts = Optional
-				.ofNullable(this.productRepository.findByParentId(userProduct.getProduct_id()));
-
-		List<ProductDTO> sub_products = Collections.emptyList();
-		if (!subProducts.isEmpty()) {
-			sub_products = subProducts.get().stream()
-					.map(ProductDTO::new)
-					.collect(Collectors.toList());
-		}
-        
-        return new UserProductsDTO(
-                userProduct.getProduct_id(),
-                product.get().getProduct_name(),
-                product.get().getProduct_type().getType(),
-                userProduct.getStatus().getStatus(),
-                userProduct.getStart_date().toString(),
-                identifiers,
-                descriptions, 
-                sub_products,
-                new PriceDTO(userProduct) 
-        );
-    }
+	}
 
 }
