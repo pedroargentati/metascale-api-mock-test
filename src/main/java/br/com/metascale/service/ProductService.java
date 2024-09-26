@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.entity.Product;
 import br.com.metascale.repository.ProductRepository;
@@ -16,6 +17,9 @@ public class ProductService {
 	@Autowired
 	private ProductRepository produtoRepository;
 	
+	@Autowired
+	private UsersProductsService usersProductsService;
+	
 	public List<ProductDTO> getAll() {
 		return produtoRepository.findAll()
 				.stream()
@@ -23,10 +27,14 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 	
-	public ProductDTO getBydId(String produto_id) {
-		var produto = produtoRepository.findById(produto_id);
+	public ProductDTO getBydId(String product_id) {
+		var produto = produtoRepository.findById(product_id);
+		if (produto.isPresent()) {
+			List<DescriptionDTO> descriptions = usersProductsService.getProductDescriptions(product_id);
+			return new ProductDTO(produto.get(), descriptions);
+		}
 		
-		return produto.isPresent() ? new ProductDTO(produto.get()) : null;
+		return null;
 	}
 	
 	public ProductDTO create(ProductDTO produto) {

@@ -119,7 +119,7 @@ public class UsersProductsService {
 		);
 	}
 
-	private List<DescriptionDTO> getProductDescriptions(String productId) {
+	public List<DescriptionDTO> getProductDescriptions(String productId) {
 		return productDescriptionRepository.findByProductId(productId)
 				.stream()
 				.map(DescriptionDTO::new)
