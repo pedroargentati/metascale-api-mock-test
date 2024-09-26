@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 
 import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.UserProductsDTO;
+import br.com.metascale.domain.entity.Product;
 import br.com.metascale.domain.entity.ProductDescription;
 import br.com.metascale.domain.entity.User;
 import br.com.metascale.domain.entity.UserProduct;
 import br.com.metascale.repository.ProductDescriptionRepository;
+import br.com.metascale.repository.ProductRepository;
 import br.com.metascale.repository.UserRepository;
 import br.com.metascale.repository.UsersProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +32,9 @@ public class UsersProductsService {
 	
 	@Autowired
 	private ProductDescriptionRepository productDescriptionRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	public List<UserProductsDTO> getAll() {
 		return userProductsRepository.findAll()
@@ -88,10 +93,12 @@ public class UsersProductsService {
         		.map(DescriptionDTO::new)
         		.collect(Collectors.toList());
         
+        Optional<Product> product = this.productRepository.findById(userProduct.getProduct_id());
+        
         return new UserProductsDTO(
                 userProduct.getProduct_id(),
-                "Nome do produto",
-                "mobile",
+                product.get().getProduct_name(),
+                product.get().getProduct_type().getType(),
                 userProduct.getStatus().getStatus(),
                 userProduct.getStart_date().toString(),
                 identifiers,
