@@ -1,6 +1,5 @@
 package br.com.metascale.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,7 +13,6 @@ import br.com.metascale.domain.PriceDTO;
 import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.Product;
-import br.com.metascale.domain.entity.ProductDescription;
 import br.com.metascale.domain.entity.User;
 import br.com.metascale.domain.entity.UserProduct;
 import br.com.metascale.repository.ProductDescriptionRepository;
@@ -51,11 +49,11 @@ public class UsersProductsService {
 			throw new EntityNotFoundException("Usuário não encontrado.");
 		}
 		
-        List<UserProduct> userProducts = userProductsRepository.findByUserId(user_id);
-        if (userProducts == null || userProducts.isEmpty()) {
+		List<UserProduct> userProducts = userProductsRepository.findByUserId(user_id);
+		if (userProducts == null || userProducts.isEmpty()) {
 			throw new NotFoundException();
-        }
-        
+		}
+
 		return userProducts.stream()
 				.map(this::toUserProductsDTO)
 				.collect(Collectors.toList());

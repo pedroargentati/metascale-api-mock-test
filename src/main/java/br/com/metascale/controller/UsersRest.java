@@ -32,10 +32,10 @@ public class UsersRest {
 
 	@GetMapping("/{user_id}/products")
 	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) throws NotFoundException {
-	    var userProducts = usersProductService.getAllUserProducts(user_id);
-	    return (userProducts == null || userProducts.isEmpty())
-	            ? ResponseEntity.noContent().build()
-	            : ResponseEntity.ok(userProducts);
+		var userProducts = usersProductService.getAllUserProducts(user_id);
+		return (userProducts == null || userProducts.isEmpty())
+				? ResponseEntity.noContent().build()
+				: ResponseEntity.ok(userProducts);
 	}
 
 
@@ -59,7 +59,8 @@ public class UsersRest {
 	public ResponseEntity<UsersDTO> createCliente(@RequestBody UsersDTO clienteDTO) {
 		UsersDTO userSaved = usersService.create(clienteDTO);
 
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/api/metascale/users/{user_id}")
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/api/metascale/users/{user_id}")
 				.buildAndExpand(userSaved.user_id()).toUri();
 
 		return ResponseEntity.created(location).body(userSaved);

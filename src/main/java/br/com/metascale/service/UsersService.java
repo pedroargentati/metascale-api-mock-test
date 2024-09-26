@@ -24,12 +24,12 @@ public class UsersService {
 				.map(UsersDTO::new)
 				.collect(Collectors.toList());
 	}
-	
-    public User findUserById(String id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
-    }
-	
+
+	public User findUserById(String id) {
+		Optional<User> user = userRepository.findById(id);
+		return user.orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+	}
+
 	public UsersDTO getBydId(String user_id) {
 		var user = userRepository.findById(user_id);
 		

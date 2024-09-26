@@ -19,37 +19,38 @@ public class User {
 	private String city;
 	private String state;
 
-	public User() {}
+	public User() {
+	}
 
 	public User(UsersDTO user) {
-	    this.id = user.user_id();
-	    this.name = user.name();
-	    this.email = user.email();
-	    this.phone = user.phone();
-	    this.city = user.city();
-	    this.state = user.state();
+		this.id = user.user_id();
+		this.name = user.name();
+		this.email = user.email();
+		this.phone = user.phone();
+		this.city = user.city();
+		this.state = user.state();
 	}
 
 	public void updateCustomer(UsersDTO customer) {
-	    if (customer.name() != null) {
-	        this.name = customer.name();
-	    }
+		if (customer.name() != null) {
+			this.name = customer.name();
+		}
 
-	    if (customer.email() != null) {
-	        this.email = customer.email();
-	    }
+		if (customer.email() != null) {
+			this.email = customer.email();
+		}
 
-	    if (customer.phone() != null) {
-	        this.phone = customer.phone();
-	    }
+		if (customer.phone() != null) {
+			this.phone = customer.phone();
+		}
 
-	    if (customer.city() != null) {
-	        this.city = customer.city();
-	    }
+		if (customer.city() != null) {
+			this.city = customer.city();
+		}
 
-	    if (customer.state() != null) {
-	        this.state = customer.state();
-	    }
+		if (customer.state() != null) {
+			this.state = customer.state();
+		}
 	}
 
 	public String getId() {

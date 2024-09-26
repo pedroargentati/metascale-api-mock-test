@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 @Table(name = "userproduct")
 @Entity(name = "UserProduct")
 public class UserProduct {
-	
+
 	@Id
 	private String user_id;
 	private String product_id;
@@ -23,14 +23,15 @@ public class UserProduct {
 	private String type;
 	private String recurring_period;
 	private Float value;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	public UserProduct() {}
+	public UserProduct() {
+	}
 
 	public UserProduct(UserProductsDTO customerProduct) {
-	    this.status = Status.of(customerProduct.status());
+		this.status = Status.of(customerProduct.status());
 	}
 
 	public void updateCustomerProduct(UserProductsDTO customerProduct) {
