@@ -16,7 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.UsersDTO;
-import br.com.metascale.service.ProductService;
+import br.com.metascale.service.UsersProductsService;
 import br.com.metascale.service.UsersService;
 
 @RestController
@@ -27,19 +27,19 @@ public class UsersRest {
 	private UsersService usersService;
 	
 	@Autowired
-	private ProductService productService;
+	private UsersProductsService usersProductService;
 
 	@GetMapping("/{user_id}/products")
 	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) {
-	    var userProducts = productService.getAllUserProducts(user_id);
+	    var userProducts = usersProductService.getAllUserProducts(user_id);
 	    return (userProducts == null || userProducts.isEmpty())
 	            ? ResponseEntity.noContent().build()
 	            : ResponseEntity.ok(userProducts);
 	}
 
-/*	
-	@GetMapping("")
-	public ResponseEntity<List<UsersDTO>> get() {
+
+	@GetMapping("/")
+	public ResponseEntity<List<UsersDTO>> getAll() {
 		var user = usersService.getAll();
 		return (user == null || !user.isEmpty())
 				? ResponseEntity.ok(user)
@@ -69,5 +69,5 @@ public class UsersRest {
 		var userUpdated = usersService.update(user, user_id);
 		return ResponseEntity.ok(userUpdated);
 	}
-	*/
+
 }

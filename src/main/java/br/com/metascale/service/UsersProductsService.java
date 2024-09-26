@@ -1,5 +1,6 @@
 package br.com.metascale.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,10 @@ public class UsersProductsService {
 				.stream()
 				.map(UserProductsDTO::new)
 				.collect(Collectors.toList());
+	}
+	
+	public List<UserProductsDTO> getAllUserProducts(String user_id) {
+		return new ArrayList<>();
 	}
 	
 	public UserProductsDTO getBydId(Integer cliente_id) {

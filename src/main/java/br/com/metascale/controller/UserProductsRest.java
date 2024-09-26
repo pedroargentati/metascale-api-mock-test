@@ -19,7 +19,7 @@ import br.com.metascale.service.UsersProductsService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/metascale/users")
+@RequestMapping("/api/metascale/userproducts")
 public class UserProductsRest {
 
 	@Autowired
@@ -30,7 +30,7 @@ public class UserProductsRest {
 		UserProductsDTO clienteProdutoSaved = userProductService.create(clientes);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/api/metascale/users/{customer_product_id}")
+				.path("/api/metascale/userproducts/{customer_product_id}")
 				.buildAndExpand(clienteProdutoSaved.id())
 				.toUri();
 
