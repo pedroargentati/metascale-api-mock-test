@@ -34,7 +34,7 @@ public class ProductRest {
 	}
 
 	@GetMapping("/{product_id}")
-	public ResponseEntity<ProductDTO> get(@PathVariable Integer product_id) {
+	public ResponseEntity<ProductDTO> get(@PathVariable String product_id) {
 		var produto = productService.getBydId(product_id);
 		return produto != null
 				? ResponseEntity.ok(produto)
@@ -54,7 +54,7 @@ public class ProductRest {
 	}
 
 	@PutMapping("/{product_id}")
-	public ResponseEntity<ProductDTO> change(@PathVariable Integer product_id, @RequestBody ProductDTO produto) {
+	public ResponseEntity<ProductDTO> change(@PathVariable String product_id, @RequestBody ProductDTO produto) {
 		var produtoUpdated = productService.update(produto, product_id);
 
 		return ResponseEntity.ok(produtoUpdated);

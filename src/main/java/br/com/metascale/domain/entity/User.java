@@ -12,8 +12,7 @@ import jakarta.persistence.Table;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private String id;
 	private String name;
 	private String email;
 	private String phone;
@@ -22,13 +21,13 @@ public class User {
 
 	public User() {}
 
-	public User(UsersDTO customers) {
-	    this.id = customers.user_id();
-	    this.name = customers.name();
-	    this.email = customers.email();
-	    this.phone = customers.phone();
-	    this.city = customers.city();
-	    this.state = customers.state();
+	public User(UsersDTO user) {
+	    this.id = user.user_id();
+	    this.name = user.name();
+	    this.email = user.email();
+	    this.phone = user.phone();
+	    this.city = user.city();
+	    this.state = user.state();
 	}
 
 	public void updateCustomer(UsersDTO customer) {
@@ -53,11 +52,11 @@ public class User {
 	    }
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

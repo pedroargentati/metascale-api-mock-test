@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,7 @@ public class UsersRest {
 	private UsersProductsService usersProductService;
 
 	@GetMapping("/{user_id}/products")
-	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) {
+	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) throws NotFoundException {
 	    var userProducts = usersProductService.getAllUserProducts(user_id);
 	    return (userProducts == null || userProducts.isEmpty())
 	            ? ResponseEntity.noContent().build()
@@ -47,7 +48,7 @@ public class UsersRest {
 	}
 
 	@GetMapping("/{user_id}")
-	public ResponseEntity<UsersDTO> get(@PathVariable Integer user_id) {
+	public ResponseEntity<UsersDTO> get(@PathVariable String user_id) {
 		var user = usersService.getBydId(user_id);
 		return user != null
 				? ResponseEntity.ok(user)
@@ -65,7 +66,7 @@ public class UsersRest {
 	}
 
 	@PutMapping("/{user_id}")
-	public ResponseEntity<UsersDTO> change(@PathVariable Integer user_id, @RequestBody UsersDTO user) {
+	public ResponseEntity<UsersDTO> change(@PathVariable String user_id, @RequestBody UsersDTO user) {
 		var userUpdated = usersService.update(user, user_id);
 		return ResponseEntity.ok(userUpdated);
 	}

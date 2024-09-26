@@ -1,47 +1,73 @@
 package br.com.metascale.service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.UserProductsDTO;
+import br.com.metascale.domain.entity.ProductDescription;
+import br.com.metascale.domain.entity.User;
 import br.com.metascale.domain.entity.UserProduct;
-import br.com.metascale.repository.CustomerProductRepository;
+import br.com.metascale.repository.ProductDescriptionRepository;
+import br.com.metascale.repository.UserRepository;
+import br.com.metascale.repository.UsersProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UsersProductsService {
 
 	@Autowired
-	private CustomerProductRepository clienteProdutoRepository;
+	private UsersProductRepository userProductsRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private ProductDescriptionRepository productDescriptionRepository;
 
 	public List<UserProductsDTO> getAll() {
-		return clienteProdutoRepository.findAll()
+		return userProductsRepository.findAll()
 				.stream()
 				.map(UserProductsDTO::new)
 				.collect(Collectors.toList());
 	}
 	
-	public List<UserProductsDTO> getAllUserProducts(String user_id) {
-		return new ArrayList<>();
+	public List<UserProductsDTO> getAllUserProducts(String user_id) throws NotFoundException {
+		Optional<User> user = this.userRepository.findById(user_id);
+		if (!user.isPresent()) {
+			throw new EntityNotFoundException("Usuário não encontrado.");
+		}
+		
+        List<UserProduct> userProducts = userProductsRepository.findByuser_id(user_id);
+        if (userProducts == null || userProducts.isEmpty()) {
+			throw new NotFoundException();
+        }
+        
+		return userProducts.stream()
+				.map(this::toUserProductsDTO)
+				.collect(Collectors.toList());
 	}
 	
-	public UserProductsDTO getBydId(Integer cliente_id) {
-		var clienteProduto = clienteProdutoRepository.findById(cliente_id);
+	public UserProductsDTO getBydId(String cliente_id) {
+		var clienteProduto = userProductsRepository.findById(cliente_id);
 
 		return clienteProduto.isPresent() ? new UserProductsDTO(clienteProduto.get()) : null;
 	}
 
 	public UserProductsDTO create(UserProductsDTO cliente) {
-		var clienteSaved = clienteProdutoRepository.save(new UserProduct(cliente));
+		var clienteSaved = userProductsRepository.save(new UserProduct(cliente));
 
 		return new UserProductsDTO(clienteSaved);
 	}
 
-	public UserProductsDTO update(UserProductsDTO cliente, Integer cliente_id) {
-		var optionalCliente = clienteProdutoRepository.findById(cliente_id);
+	public UserProductsDTO update(UserProductsDTO cliente, String cliente_id) {
+		var optionalCliente = userProductsRepository.findById(cliente_id);
 		if (!optionalCliente.isPresent()) {
 			return null;
 		}
@@ -49,9 +75,30 @@ public class UsersProductsService {
 		var clienteExistente = optionalCliente.get();
 
 		clienteExistente.updateCustomerProduct(cliente);
-		clienteProdutoRepository.save(clienteExistente);
+		userProductsRepository.save(clienteExistente);
 
 		return new UserProductsDTO(clienteExistente);
 	}
+	
+    private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
+        List<String> identifiers = List.of("+51939791073");
+        List<ProductDescription> listProductDescription = Optional.ofNullable(this.productDescriptionRepository.findByProductId(userProduct.getProduct_id())).orElse(Collections.emptyList());
+
+        List<DescriptionDTO> descriptions = listProductDescription.stream()
+        		.map(DescriptionDTO::new)
+        		.collect(Collectors.toList());
+        
+        return new UserProductsDTO(
+                userProduct.getProduct_id(),
+                "Nome do produto",
+                "mobile",
+                userProduct.getStatus().getStatus(),
+                userProduct.getStart_date().toString(),
+                identifiers,
+                descriptions, 
+                null,
+                null 
+        );
+    }
 
 }

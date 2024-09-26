@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 
 import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.entity.Product;
-import br.com.metascale.repository.ProdutoRepository;
+import br.com.metascale.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
 	@Autowired
-	private ProdutoRepository produtoRepository;
+	private ProductRepository produtoRepository;
 	
 	public List<ProductDTO> getAll() {
 		return produtoRepository.findAll()
@@ -23,7 +23,7 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 	
-	public ProductDTO getBydId(Integer produto_id) {
+	public ProductDTO getBydId(String produto_id) {
 		var produto = produtoRepository.findById(produto_id);
 		
 		return produto.isPresent() ? new ProductDTO(produto.get()) : null;
@@ -35,7 +35,7 @@ public class ProductService {
 		return new ProductDTO(produtoSaved);
 	}
 	
-	public ProductDTO update(ProductDTO produto, Integer produto_id) {
+	public ProductDTO update(ProductDTO produto, String produto_id) {
 		var optionalProduto = produtoRepository.findById(produto_id);
 		if (!optionalProduto.isPresent()) {
 			return null;

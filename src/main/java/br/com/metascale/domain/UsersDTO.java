@@ -4,7 +4,7 @@ import br.com.metascale.domain.entity.User;
 import jakarta.validation.constraints.Email;
 
 public record UsersDTO(
-		Integer user_id,
+		String user_id,
 		String name,
 		@Email String email,
 		String phone,
