@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.metascale.core.exceptions.RecordNotFoundException;
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.UsersDTO;
 import br.com.metascale.service.UsersProductsService;
@@ -31,7 +32,7 @@ public class UsersRest {
 	private UsersProductsService usersProductService;
 
 	@GetMapping("/{user_id}/products")
-	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) throws NotFoundException {
+	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) throws NotFoundException, RecordNotFoundException {
 		var userProducts = usersProductService.getAllUserProducts(user_id);
 		return (userProducts == null || userProducts.isEmpty())
 				? ResponseEntity.noContent().build()
@@ -39,23 +40,21 @@ public class UsersRest {
 	}
 
 
-	@GetMapping("/")
+	@GetMapping("")
 	public ResponseEntity<List<UsersDTO>> getAll() {
 		var user = usersService.getAll();
-		return (user == null || !user.isEmpty())
-				? ResponseEntity.ok(user)
-				: ResponseEntity.noContent().build();
+		return ResponseEntity.ok(user);
 	}
 
 	@GetMapping("/{user_id}")
-	public ResponseEntity<UsersDTO> get(@PathVariable String user_id) {
-		var user = usersService.getBydId(user_id);
+	public ResponseEntity<UsersDTO> get(@PathVariable String user_id) throws RecordNotFoundException {
+		var user = usersService.getById(user_id);
 		return user != null
 				? ResponseEntity.ok(user)
 				: ResponseEntity.notFound().build();
 	}
 
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<UsersDTO> createCliente(@RequestBody UsersDTO clienteDTO) {
 		UsersDTO userSaved = usersService.create(clienteDTO);
 

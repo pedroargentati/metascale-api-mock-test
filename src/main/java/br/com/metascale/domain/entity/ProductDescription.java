@@ -1,6 +1,8 @@
 package br.com.metascale.domain.entity;
 
 import br.com.metascale.constants.Category;
+import br.com.metascale.domain.DescriptionDTO;
+import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.ProductDescriptionDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +28,13 @@ public class ProductDescription {
 		this.text = productDescription.text();
 		this.url = productDescription.url();
 		this.category = productDescription.category();
+	}
+	
+	public ProductDescription(ProductDTO produto, DescriptionDTO desc) {
+		this.id = produto.id();
+		this.text = desc.text();
+		this.url = desc.url();
+		this.category = Category.of(desc.category());
 	}
 
 	public String getId() {

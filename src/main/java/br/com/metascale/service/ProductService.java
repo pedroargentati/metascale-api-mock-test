@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.metascale.core.exceptions.RecordNotFoundException;
 import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.domain.entity.Product;
@@ -20,6 +21,12 @@ public class ProductService {
 	@Autowired
 	private UsersProductsService usersProductsService;
 	
+	@Autowired
+	private ProductsDescriptionService productsDescriptionService;
+
+	@Autowired
+	private UsersProductsService productsService;
+	
 	public List<ProductDTO> getAll() {
 		return produtoRepository.findAll()
 				.stream()
@@ -27,14 +34,14 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 	
-	public ProductDTO getBydId(String product_id) {
+	public ProductDTO getById(String product_id) throws RecordNotFoundException {
 		var produto = produtoRepository.findById(product_id);
-		if (produto.isPresent()) {
-			List<DescriptionDTO> descriptions = usersProductsService.getProductDescriptions(product_id);
-			return new ProductDTO(produto.get(), descriptions);
+		if (!produto.isPresent()) {
+			throw new RecordNotFoundException("Produto com o código ".concat(product_id).concat(" não encontrado."));
 		}
 		
-		return null;
+		List<DescriptionDTO> descriptions = usersProductsService.getProductDescriptions(product_id);
+		return new ProductDTO(produto.get(), descriptions);
 	}
 	
 	public ProductDTO create(ProductDTO produto) {
@@ -43,10 +50,10 @@ public class ProductService {
 		return new ProductDTO(produtoSaved);
 	}
 	
-	public ProductDTO update(ProductDTO produto, String produto_id) {
-		var optionalProduto = produtoRepository.findById(produto_id);
+	public ProductDTO update(ProductDTO produto, String product_id) throws RecordNotFoundException {
+		var optionalProduto = produtoRepository.findById(product_id);
 		if (!optionalProduto.isPresent()) {
-			return null;
+			throw new RecordNotFoundException("Produto com o código ".concat(product_id).concat(" não encontrado."));
 		}
 		
 		var produtoExistente = optionalProduto.get();
@@ -54,6 +61,10 @@ public class ProductService {
 		produtoExistente.updateProduto(produto);
 		produtoRepository.save(produtoExistente);
 		
-		return new ProductDTO(produtoExistente);
+		productsDescriptionService.updateDescriptions(produto);
+		
+		List<DescriptionDTO> descriptions = this.productsService.getProductDescriptions(product_id);
+
+		return new ProductDTO(produtoExistente, descriptions);
 	}
 }

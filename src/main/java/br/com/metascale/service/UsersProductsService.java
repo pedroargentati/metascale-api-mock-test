@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import br.com.metascale.core.exceptions.RecordNotFoundException;
 import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.PriceDTO;
 import br.com.metascale.domain.ProductDTO;
@@ -19,7 +20,6 @@ import br.com.metascale.repository.ProductDescriptionRepository;
 import br.com.metascale.repository.ProductRepository;
 import br.com.metascale.repository.UserRepository;
 import br.com.metascale.repository.UsersProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UsersProductsService {
@@ -43,10 +43,10 @@ public class UsersProductsService {
 				.collect(Collectors.toList());
 	}
 	
-	public List<UserProductsDTO> getAllUserProducts(String user_id) throws NotFoundException {
+	public List<UserProductsDTO> getAllUserProducts(String user_id) throws NotFoundException, RecordNotFoundException {
 		Optional<User> user = this.userRepository.findById(user_id);
 		if (!user.isPresent()) {
-			throw new EntityNotFoundException("Usuário não encontrado.");
+			throw new RecordNotFoundException("Usuário não encontrado.");
 		}
 		
 		List<UserProduct> userProducts = userProductsRepository.findByUserId(user_id);
@@ -55,11 +55,18 @@ public class UsersProductsService {
 		}
 
 		return userProducts.stream()
-				.map(this::toUserProductsDTO)
+				.map(t -> {
+					try {
+						return toUserProductsDTO(t);
+					} catch (RecordNotFoundException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
 				.collect(Collectors.toList());
 	}
 	
-	public UserProductsDTO getBydId(String cliente_id) {
+	public UserProductsDTO getById(String cliente_id) {
 		var clienteProduto = userProductsRepository.findById(cliente_id);
 
 		return clienteProduto.isPresent() ? new UserProductsDTO(clienteProduto.get()) : null;
@@ -85,7 +92,7 @@ public class UsersProductsService {
 		return new UserProductsDTO(clienteExistente);
 	}
 	
-	private UserProductsDTO toUserProductsDTO(UserProduct userProduct) {
+	private UserProductsDTO toUserProductsDTO(UserProduct userProduct) throws RecordNotFoundException {
 		String product_id = userProduct.getProduct_id();
 
 		List<String> identifiers = this.getIdentifiersByProductId(product_id);
@@ -96,7 +103,7 @@ public class UsersProductsService {
 		// Buscar produto principal
 		Product product = productRepository
 				.findById(product_id)
-				.orElseThrow(() -> new IllegalArgumentException("Produto com ID " + product_id + " não encontrado"));
+				.orElseThrow(() -> new RecordNotFoundException("Produto com ID " + product_id + " não encontrado"));
 
 		// Buscar subprodutos e suas descrições
 		List<ProductDTO> subProducts = productRepository.findByParentId(product_id)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.metascale.core.exceptions.RecordNotFoundException;
 import br.com.metascale.domain.ProductDTO;
 import br.com.metascale.service.ProductService;
 import jakarta.validation.Valid;
@@ -34,8 +35,8 @@ public class ProductRest {
 	}
 
 	@GetMapping("/{product_id}")
-	public ResponseEntity<ProductDTO> get(@PathVariable String product_id) {
-		var produto = productService.getBydId(product_id);
+	public ResponseEntity<ProductDTO> get(@PathVariable String product_id) throws RecordNotFoundException {
+		var produto = productService.getById(product_id);
 		return produto != null
 				? ResponseEntity.ok(produto)
 				: ResponseEntity.notFound().build();
@@ -54,7 +55,7 @@ public class ProductRest {
 	}
 
 	@PutMapping("/{product_id}")
-	public ResponseEntity<ProductDTO> change(@PathVariable String product_id, @RequestBody ProductDTO produto) {
+	public ResponseEntity<ProductDTO> change(@PathVariable String product_id, @RequestBody ProductDTO produto) throws RecordNotFoundException {
 		var produtoUpdated = productService.update(produto, product_id);
 
 		return ResponseEntity.ok(produtoUpdated);

@@ -3,6 +3,7 @@ package br.com.metascale.domain.entity;
 import java.util.Set;
 
 import br.com.metascale.constants.ProductType;
+import br.com.metascale.domain.DescriptionDTO;
 import br.com.metascale.domain.ProductDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
