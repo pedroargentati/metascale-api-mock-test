@@ -4,18 +4,23 @@ import java.util.Date;
 
 import br.com.metascale.constants.Status;
 import br.com.metascale.domain.UserProductsDTO;
+import br.com.metascale.domain.entity.id.UserProductId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
 @Table(name = "userproduct")
 @Entity(name = "UserProduct")
+@IdClass(value = UserProductId.class)
 public class UserProduct {
 
 	@Id
 	private String user_id;
+	@Id
+
 	private String product_id;
 	private Date start_date;
 	private Date end_date;
