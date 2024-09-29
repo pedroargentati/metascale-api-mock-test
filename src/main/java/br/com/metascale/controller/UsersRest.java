@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,9 +37,12 @@ public class UsersRest {
 	@GetMapping("/{user_id}/products")
 	public ResponseEntity<List<UserProductsDTO>> getUserProducts(@PathVariable String user_id) throws NotFoundException, RecordNotFoundException {
 		var userProducts = usersProductService.getAllUserProducts(user_id);
+		HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        
 		return (userProducts == null || userProducts.isEmpty())
 				? ResponseEntity.noContent().build()
-				: ResponseEntity.ok(userProducts);
+				: new ResponseEntity<>(userProducts, headers, HttpStatus.OK);
 	}
 
 
@@ -55,8 +61,8 @@ public class UsersRest {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<UsersDTO> createCliente(@RequestBody UsersDTO clienteDTO) {
-		UsersDTO userSaved = usersService.create(clienteDTO);
+	public ResponseEntity<UsersDTO> createUser(@RequestBody UsersDTO userDTO) {
+		UsersDTO userSaved = usersService.create(userDTO);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/api/metascale/users/{user_id}")

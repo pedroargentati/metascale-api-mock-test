@@ -5,6 +5,7 @@ import java.util.Date;
 import br.com.metascale.constants.Status;
 import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.id.UserProductId;
+import br.com.metascale.utils.DateUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,7 +40,11 @@ public class UserProduct {
 		this.status = Status.of(customerProduct.status());
 	}
 
-	public void updateCustomerProduct(UserProductsDTO customerProduct) {
+	public void updateUsersProduct(UserProductsDTO userProducts) {
+		if (userProducts.start_date() != null) {
+			this.start_date = DateUtils.stringToDate(userProducts.start_date());
+		}
+		
 	}
 
 	public String getUser_id() {

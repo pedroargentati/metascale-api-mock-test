@@ -7,6 +7,14 @@ import java.util.Objects;
 public class UserProductId implements Serializable{
 	private String user_id;
 	private String product_id;
+	
+	public UserProductId() {}
+	
+	public UserProductId(String user_id, String product_id) {
+		super();
+		this.user_id = user_id;
+		this.product_id = product_id;
+	}
 
 	public String getUser_id() {
 		return user_id;

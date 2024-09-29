@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.metascale.domain.entity.UserProduct;
+import br.com.metascale.domain.entity.id.UserProductId;
 
-public interface UsersProductRepository extends JpaRepository<UserProduct, String> {
+public interface UsersProductRepository extends JpaRepository<UserProduct, UserProductId> {
 	@Query("SELECT u from UserProduct u where u.user_id = :ui")
 	List<UserProduct> findByUserId(@Param(value = "ui") String ui);
 

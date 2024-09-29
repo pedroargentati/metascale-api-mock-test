@@ -16,6 +16,7 @@ import br.com.metascale.domain.UserProductsDTO;
 import br.com.metascale.domain.entity.Product;
 import br.com.metascale.domain.entity.User;
 import br.com.metascale.domain.entity.UserProduct;
+import br.com.metascale.domain.entity.id.UserProductId;
 import br.com.metascale.repository.ProductDescriptionRepository;
 import br.com.metascale.repository.ProductRepository;
 import br.com.metascale.repository.UserRepository;
@@ -39,7 +40,14 @@ public class UsersProductsService {
 	public List<UserProductsDTO> getAll() {
 		return userProductsRepository.findAll()
 				.stream()
-				.map(UserProductsDTO::new)
+				.map(userProduct -> {
+					try {
+						return toUserProductsDTO(userProduct);
+					} catch (RecordNotFoundException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
 				.collect(Collectors.toList());
 	}
 	
@@ -55,9 +63,9 @@ public class UsersProductsService {
 		}
 
 		return userProducts.stream()
-				.map(t -> {
+				.map(userProduct -> {
 					try {
-						return toUserProductsDTO(t);
+						return toUserProductsDTO(userProduct);
 					} catch (RecordNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -66,30 +74,30 @@ public class UsersProductsService {
 				.collect(Collectors.toList());
 	}
 	
-	public UserProductsDTO getById(String cliente_id) {
-		var clienteProduto = userProductsRepository.findById(cliente_id);
+	public UserProductsDTO getById(String user_id, String product_id) throws RecordNotFoundException {
+		var userProduct = userProductsRepository.findById(new UserProductId(user_id, product_id));
 
-		return clienteProduto.isPresent() ? new UserProductsDTO(clienteProduto.get()) : null;
+		return userProduct.isPresent() ? this.toUserProductsDTO(userProduct.get()) : null;
 	}
 
-	public UserProductsDTO create(UserProductsDTO cliente) {
-		var clienteSaved = userProductsRepository.save(new UserProduct(cliente));
+	public UserProductsDTO create(UserProductsDTO userProducts) {
+		var clienteSaved = userProductsRepository.save(new UserProduct(userProducts));
 
 		return new UserProductsDTO(clienteSaved);
 	}
 
-	public UserProductsDTO update(UserProductsDTO cliente, String cliente_id) {
-		var optionalCliente = userProductsRepository.findById(cliente_id);
-		if (!optionalCliente.isPresent()) {
+	public UserProductsDTO update(UserProductsDTO user, String user_id) {
+		var userProducts = userProductsRepository.findById(new UserProductId(user_id, user.id()));
+		if (!userProducts.isPresent()) {
 			return null;
 		}
+		
+		var existingUserProduct = userProducts.get();
 
-		var clienteExistente = optionalCliente.get();
+		existingUserProduct.updateUsersProduct(user);
+		userProductsRepository.save(existingUserProduct);
 
-		clienteExistente.updateCustomerProduct(cliente);
-		userProductsRepository.save(clienteExistente);
-
-		return new UserProductsDTO(clienteExistente);
+		return new UserProductsDTO(existingUserProduct);
 	}
 	
 	private UserProductsDTO toUserProductsDTO(UserProduct userProduct) throws RecordNotFoundException {
